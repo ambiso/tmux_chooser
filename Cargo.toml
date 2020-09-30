@@ -1,6 +1,6 @@
 [package]
 name = "tmux_chooser"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["ambiso <ambiso@invalid>"]
 edition = "2018"
 readme="README.md"
