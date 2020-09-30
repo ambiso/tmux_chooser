@@ -1,6 +1,6 @@
 [package]
 name = "tmux_chooser"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["ambiso <ambiso@invalid>"]
 edition = "2018"
 description = "Choose a tmux session to attach to or create a new one. Inspired by https://cedaei.com/posts/ideas-from-my-dev-setup-always-tmux/"
