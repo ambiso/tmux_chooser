@@ -11,10 +11,12 @@ fn main() {
         println!("\rEnter nil to drop to normal prompt");
     })
     .expect("Error setting Ctrl-C handler");
+
     let sessions: Vec<_> = Sessions::get(SESSION_ALL)
         .expect("Could not obtain tmux sessions")
         .into_iter()
         .collect();
+
     if sessions.len() == 0 {
         println!("No existing sessions.")
     } else {
@@ -29,14 +31,7 @@ fn main() {
                 let attached = if attached { "(attached)" } else { "" };
                 let creation = if let Some(dur) = session.created {
                     let timestamp = dur.as_millis() as u64; // tmux_interface is weird
-                    let now = SystemTime::now();
-                    let secs = now
-                        .duration_since(UNIX_EPOCH)
-                        .expect("Could not compute current time")
-                        .as_secs()
-                        - timestamp;
-
-                    util::format_seconds(secs)
+                    util::format_seconds(util::seconds_since_unix_timestamp(timestamp))
                 } else {
                     "".to_string()
                 };
@@ -46,6 +41,7 @@ fn main() {
             }
         }
     }
+
     println!("\nCreate a new session by entering a name for it:");
 
     loop {
@@ -89,6 +85,7 @@ fn main() {
                         ..Default::default()
                     }
                 };
+
                 match tmux.new_session(Some(&new_session)) {
                     Ok(_) => {}
                     Err(tmux_interface::error::Error { message, .. }) => {
