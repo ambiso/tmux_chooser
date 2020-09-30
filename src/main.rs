@@ -63,11 +63,7 @@ fn main() {
                     println!("Invalid index");
                     continue;
                 }
-                tmux.attach_session(Some(&AttachSession {
-                    target_session: Some(&sessions[idx - 1].name.as_ref().unwrap()),
-                    ..Default::default()
-                }))
-                .expect("Could not attach session");
+                util::attach_session_by_name(&mut tmux, &sessions[idx - 1].name.as_ref().unwrap());
                 return;
             }
             Err(_) => {
@@ -89,11 +85,7 @@ fn main() {
                     Err(tmux_interface::error::Error { message, .. }) => {
                         if message.starts_with("duplicate session: ") {
                             // Try to attach to session named by user
-                            tmux.attach_session(Some(&AttachSession {
-                                target_session: Some(&input),
-                                ..Default::default()
-                            }))
-                            .expect("Could not attach session");
+                            util::attach_session_by_name(&mut tmux, &input);
                         } else {
                             panic!("Unexpected error: {}", message);
                         }
