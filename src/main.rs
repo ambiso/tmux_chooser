@@ -1,6 +1,4 @@
-use io::stdin;
-use std::io::BufRead;
-use std::{io, time::SystemTime, time::UNIX_EPOCH};
+use std::io::{BufRead, stdin};
 use tmux_interface::session::SESSION_ALL;
 use tmux_interface::{AttachSession, NewSession, Sessions, TmuxInterface};
 
