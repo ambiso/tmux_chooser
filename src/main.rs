@@ -1,8 +1,10 @@
 use io::stdin;
-use std::{io, time::SystemTime, time::UNIX_EPOCH};
 use std::io::BufRead;
+use std::{io, time::SystemTime, time::UNIX_EPOCH};
 use tmux_interface::session::SESSION_ALL;
 use tmux_interface::{AttachSession, NewSession, Sessions, TmuxInterface};
+
+mod util;
 
 fn main() {
     ctrlc::set_handler(move || {
@@ -24,32 +26,21 @@ fn main() {
                 } else {
                     false
                 };
-                let attached = 
-                    if attached { "(attached)" } else { "" };
+                let attached = if attached { "(attached)" } else { "" };
                 let creation = if let Some(dur) = session.created {
                     let timestamp = dur.as_millis() as u64; // tmux_interface is weird
                     let now = SystemTime::now();
-                    let secs = now.duration_since(UNIX_EPOCH).expect("Could not compute current time").as_secs() - timestamp;
+                    let secs = now
+                        .duration_since(UNIX_EPOCH)
+                        .expect("Could not compute current time")
+                        .as_secs()
+                        - timestamp;
 
-                    if secs < 60 {
-                        format!("{}s", secs)
-                    } else if secs/60 < 60 {
-                        format!("{}m", secs/60)
-                    } else if secs/(60*60) < 24 {
-                        format!("{}h", secs/(60*60))
-                    } else {
-                        format!("{}d", secs/(60*60*24))
-                    }
+                    util::format_seconds(secs)
                 } else {
                     "".to_string()
                 };
-                println!(
-                    "{} - {} {} {}",
-                    id + 1,
-                    name,
-                    creation,
-                    attached,
-                );
+                println!("{} - {} {} {}", id + 1, name, creation, attached);
             } else {
                 println!("{} - [no name]", id + 1);
             }
@@ -74,7 +65,7 @@ fn main() {
 
         match input.parse::<usize>() {
             Ok(idx) => {
-                if idx == 0 || idx - 1 >= sessions.len() {
+                if idx == 0 || idx > sessions.len() {
                     println!("Invalid index");
                     continue;
                 }
@@ -86,6 +77,7 @@ fn main() {
                 return;
             }
             Err(_) => {
+                // user didn't enter a number, so we create a new session
                 let new_session = if input.len() == 0 {
                     NewSession {
                         session_name: None,
@@ -101,7 +93,7 @@ fn main() {
                     Ok(_) => {}
                     Err(tmux_interface::error::Error { message, .. }) => {
                         if message.starts_with("duplicate session: ") {
-                            // Try to attach to named session
+                            // Try to attach to session named by user
                             tmux.attach_session(Some(&AttachSession {
                                 target_session: Some(&input),
                                 ..Default::default()
