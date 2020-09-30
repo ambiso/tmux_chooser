@@ -1,6 +1,7 @@
 # tmux_chooser
 
-Inspired by https://cedaei.com/posts/ideas-from-my-dev-setup-always-tmux/
+Choose a tmux session to attach to or create a new one.
+Inspired by [this shell script](https://cedaei.com/posts/ideas-from-my-dev-setup-always-tmux/).
 
 ## Install
 
