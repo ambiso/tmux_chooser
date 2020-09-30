@@ -1,6 +1,6 @@
 use std::io::{BufRead, stdin};
 use tmux_interface::session::SESSION_ALL;
-use tmux_interface::{AttachSession, NewSession, Sessions, TmuxInterface};
+use tmux_interface::{NewSession, Sessions, TmuxInterface};
 
 mod util;
 
